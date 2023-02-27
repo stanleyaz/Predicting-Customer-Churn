@@ -10,8 +10,7 @@
 The requirements for this task are as follows:
 1. To train a classifier that can predict customer churn for Brass.
 2. To define churn for Brass - using the data provided by the company. In the data provided, Brass did not label any customer as `churned` or `not churned`. It is my responsibility to come up with a definition of churn to be used for my analysis and modeling. 
-3. To engineer features that will be used in predicting churn. Brass was unable to share much demographic data due to security concerns about sharing customer information with me as a non-staff who is not physically on site. 
-
+3. To engineer features that will be used in predicting churn. Brass was unable to share much demographic data due to security concerns about sharing customer information with me as a non-staff who is not physically on site. A key point to be noted is that since my definition of churn would likely rely on the `date` feature in my dataset, I cannot engineer new columns that are also dependent on time/date otherwise those features can be indicative of churn. For instance a feature like month over month change in debit amounts or month over month change in ledger_balance may be helpful to use, but engineering those features would rely on time and therefore indicative of churn for our model.
 ---
 
 # Metrics for Evaluation
@@ -34,8 +33,10 @@ Explanations for my choice of these metrics are provided in my [first notebook](
 1. [Introduction and Data cleaning](./notebooks/01_introduction.ipynb)
 2. [Exploratory Data Analysis](./notebooks/02_eda.ipynb)
 3. [Feature Engineering](./notebooks/03_feature_engineering.ipynb)
-4. [Preprocessing and Modelling](./notebooks/04_modeling.ipynb)
+4. [Preprocessing and Modeling](./notebooks/04_modeling.ipynb)
 5. [Analysis and Conclusions](./notebooks/05_analysis_and_conclusions.ipynb)
+
+---
 
 # Dataset used for analysis
 Brass provided me with two anonymized and unfiltered datasets:
@@ -43,6 +44,8 @@ Brass provided me with two anonymized and unfiltered datasets:
 2. A [customers.csv](./data/customers.csv) file which contained information for a sample of almost 8k customers.
 
 The two datasets had not been filtered, so there were lots of customers in the `customers` sample without any transaction in the `transactions` sample. And there were rows of transactions in the `transactions` sample that were carried out by customers who were not in the `customers` sample. Using SQL, I filtered only those customers in the `customers` sample who had transactions recorded in the `transactions` sample. This reduced the number of transactions from more than 700_000 to approximately 300_000. Even more significantly, it reduced the number of unique customers from almost 8_000 to roughly 1_500 unique customers. 
+
+---
 
 # Data Dictionary
 After joining the two datasets together, these are the features that remained in the combined dataset.
@@ -87,7 +90,7 @@ A huge chunk of the work for this project took place in this phase. As mentioned
 |3|`cred_count_ratio`|the count of `credit` transactions per number of days since registration per customer|
 |4|`deb_count_ratio`|the count of `debit` transactions per number of days since registration per customer|
 |5|`is_high_value`|a feature representing whether a customer if high or low value defined according to mean credit transactions|
-|6|`avg_ledger_balance`|the average ledger balance per customer|
+|6|`avg_ledger_bal`|the average ledger balance per customer|
 |7|`avg_cred_amnt`|the average credit amount per customer|
 |8|`avg_deb_amnt`|the average credit amount per customer| 
 |9|`avg_cred_ratio`|the average credit amount per customer per number of days since registration|
@@ -97,8 +100,24 @@ A huge chunk of the work for this project took place in this phase. As mentioned
 There were strong correlations between the `debit_count_ratio` and `debit_count` features, as well as between the `cred_count_ratio` and `credit_count` features. Hence, I dropped the `credit_count` and `debit_count` columns.
 
 ## Preprocessing and modeling
-I split the dataset into train and test sets, scaled it, and tried several different models, evaluating on the five metrics discussed earlier namely: Accuracy score, Balanced accuracy score, Recall/Sensitivity, Geometric mean, and Fbeta score. I started with Logistic Regression, Random Forest and Decision Tree Classifiers using only the numerical columns for modeling. Of those first three models, my best was the Random Forest model with a balanced accuracy of 84% for my test set, 69% recall for test set amd 83% geometric mean for test set. I decided at that point to include the `registration_type` categorical feature to see if it produces better models. But when I tested it on those three models, the metrics weren't better. For the LR and DT classifiers, the test scores were exactly the same, and for the RF classifier which was my best at that point, there was a decline - with balanced accuracy of 82%, recall of 66% and geometric mean of 82%. I decided at that point not to proceed with that feature and to continue my modeling with only my feature engineered numerical features. 
+I split the dataset into train and test sets, scaled it, and tried several different models, evaluating on the five metrics discussed earlier namely: Accuracy score, Balanced accuracy score, Recall/Sensitivity, Geometric mean, and Fbeta score. At some point I dummified and included the `registration_type` column but my evaluation metrics did not see improvements, so I decided not to proceed with that feature and to continue my modeling with only my feature engineered numerical features. 
 
-In the end my modeling process involved 14 different models (See picture below). My best model was a stacked classifier model that I had gridsearched over to tune its hyperparameters.
+In the end my modeling process involved 14 different models (See picture below). My production model was a stacked classifier model (in the picture below, it is the last model, named `Stacked Encore`). The confusion matrix in the picture is that of our best model.
 
 ![image](./images/all_models_screenshot.png) 
+
+---
+
+# Conclusions
+For every business, the less churn you have, the better. So being able to calculate and predict churn is crucial, not just because it is cheaper to retain old customers than to attract new ones, but also because it is a measure of customer satisfaction. In this project I set out to:
+
+1. To train a classifier that can predict customer churn for Brass.
+This was successfully done. Our production model had a balanced accuracy of 89%, indicating that it was performing just as well for both positive and negative classes; a recall of 82%, indicating that it was doing well at minimizing false negatives which is exactly what I wanted; an accuracy of 94% , which is 15% more accurate than the null model etc. As the confusion matrix above indicates, the model is only incorrectly classifying 17 churned customers as not churned. In comparison, our next closest model was incorrectly classifying 25 churned customers as not churned. 
+
+2. To define churn for Brass - using the data provided by the company. In the data provided, Brass did not label any customer as `churned` or `not churned`. It is my responsibility to come up with a definition of churn to be used for my analysis and modeling. 
+This was also successfully done as explained earlier.
+
+3. To engineer features that will be used in predicting churn. Brass was unable to share much demographic data due to security concerns about sharing customer information with me as a non-staff who is not physically on site. 
+This was also done as explained earlier, with the feature engineering of 11 new features (reduced to 9) which was used for our modeling to good effect. 
+
+**Going forward**: I recommend that the model be continuously fine-tuned with more data because the one year of the data is not sufficient considering a churn cutoff of 180 days. Internally, Brass could also strengthen the model by adding some more features that it was unable to share with me due to security concerns. 
