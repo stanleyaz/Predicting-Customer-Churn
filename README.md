@@ -69,7 +69,6 @@ In the five notebooks in this project, I go through the following processes:
 |Median time between most recent transactions per customer and year end|92 days|
 |**75th percentile**|**184 days**|
 
-I decided to use the 75th percentile rather than any of those averages as the cutoff for churn. Hence, 184 days was the cutoff used in this project to define churn. Accounts without transactions in over 184 days were considered to have churned. As can be seen in the distribution below, there we
-
+I decided to use the 75th percentile rather than any of those averages as the cutoff for churn. Hence, 184 days was the cutoff used in this project to define churn. Accounts without transactions in over 184 days were considered to have churned. As can be seen in the distribution below, there were still customers in whose accounts transactions still happened beyond the 184 days cutoff, but on investigation most of those were either bank charges or small amounts. I felt comfortable retaining the cutoff at 184 days. 
 
 ![image](./images/distribution_of_difference.png)
