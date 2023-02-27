@@ -60,11 +60,15 @@ After joining the two datasets together, these are the features that remained in
 ---
 # Summary
 In the five notebooks in this project, I go through the following processes:
- 1. Cleaning: As mentioned earlier, the data provided contained extraneous rows due to a mismatch in samples provided to me. I removed those using SQL by joining the datasets together into one combined - [brass.csv](./data/brass.csv) dataset which I then exported for use in my analysis and modeling. Several data cleaning operations were carried out including but not limited to - dropping columns, renaming, converting to datetime objects, converting currency, among others. 
+
+## **Data preparation, exploration and preprocessing**
+
+As mentioned earlier, the data provided contained extraneous rows due to a mismatch in samples provided to me. I removed those using SQL by joining the datasets together into one combined - [brass.csv](./data/brass.csv) dataset which I then exported for use in my analysis and modeling. Several data cleaning operations were carried out including but not limited to - dropping columns, renaming, converting to datetime objects, converting currency, among others. 
  
-2. Defining Churn: Since Brass did not label customers as either `churned` or `not churned`, I analysed the dataset to define what churn could represent in the company. In my analysis, I realized that presently Brass accounts can lay dormant for long periods but it does not mean that the customer has churned. I spoke with Brass officials who confirmed this to be true, explaining the seasonality of some clients. I found the following in my analysis:
-|What|How long|
-|---|---|
+**Defining Churn**: Since Brass did not label customers as either `churned` or `not churned`, I analysed the dataset to define what churn could represent in the company. In my analysis, I realized that presently Brass accounts can lay dormant for long periods but it does not mean that the customer has churned. I spoke with Brass officials who confirmed this to be true, explaining the seasonality of some clients. I found the following in my analysis:
+
+|**What**|**How Long**|
+|:---|:---|
 |Mean time between most recent transactions per customer and year end|107 days|
 |Median time between most recent transactions per customer and year end|92 days|
 |**75th percentile**|**184 days**|
@@ -72,3 +76,25 @@ In the five notebooks in this project, I go through the following processes:
 I decided to use the 75th percentile rather than any of those averages as the cutoff for churn. Hence, 184 days was the cutoff used in this project to define churn. Accounts without transactions in over 184 days were considered to have churned. As can be seen in the distribution below, there were still customers in whose accounts transactions still happened beyond the 184 days cutoff, but on investigation most of those were either bank charges or small amounts. I felt comfortable retaining the cutoff at 184 days. 
 
 ![image](./images/distribution_of_difference.png)
+
+## Feature Engineering 
+A huge chunk of the work for this project took place in this phase. As mentioned earlier, Brass did not provide a lot of features due to safety concerns. I had details of transactions and ledger balance, as well as the business registration type and industry, but nothing else. To successfully train a model I needed to engineer more features. In all I engineered 11 new numerical features viz:
+
+|**S/No**|**Feature**|**Description**|
+|:---|:---|:---|
+|1|`credit_count`|the raw count of credit transactions per customer|
+|2|`debit_count`|the raw count of debit transactions per customer|
+|3|`cred_count_ratio`|the count of `credit` transactions per number of days since registration per customer|
+|4|`deb_count_ratio`|the count of `debit` transactions per number of days since registration per customer|
+|5|`is_high_value`|a feature representing whether a customer if high or low value defined according to mean credit transactions|
+|6|`avg_ledger_balance`|the average ledger balance per customer|
+|7|`avg_cred_amnt`|the average credit amount per customer|
+|8|`avg_deb_amnt`|the average credit amount per customer| 
+|9|`avg_cred_ratio`|the average credit amount per customer per number of days since registration|
+|10|`avg_deb_ratio`|the average debit amount per customer per number of days since registration| 
+|11|`coeff_var`|the coefficient of variation of the `available_balance` for each customer|
+
+There were strong correlations between the `debit_count_ratio` and `debit_count` features, as well as between the `cred_count_ratio` and `credit_count` features. Hence, I dropped the `credit_count` and `debit_count` columns.
+
+## Preprocessing and modeling
+I split the dataset into train and test
