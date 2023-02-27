@@ -5,17 +5,20 @@
 ---
 
 # Problem Statement
-[Brass Business Bank (Brass)](https://www.trybrass.com/about/), a B2B company - founded in Lagos, Nigeria [less than three years ago](https://brassbanking.medium.com/introducing-brass-banking-nigerias-local-businesses-143c0ccf2bb8) - has asked me to predict customer churn for their business using a subset of customers and their transactions. Churn refers to when customers stop using a product. Brass offers commercial-grade current accounts, financial products, education, financing and partnership to support its clients which are all businesses. Churn is a big problem for this business - as it is with many others - because churning customers means loss of revenues and potential profits, and would then lead to expending more money to find new customers which is a more expensive undertaking than retaining existing customers. Churn can also be harmful to the brand if churned customers who leave because of bad experience(s) spread negative word of mouth.
+[Brass Business Bank (Brass)](https://www.trybrass.com/about/), a B2B company - founded in Lagos, Nigeria [less than three years ago](https://brassbanking.medium.com/introducing-brass-banking-nigerias-local-businesses-143c0ccf2bb8) - has asked me to predict customer churn for the business using a subset of customers and their transactions. Churn refers to when customers stop using a product. Brass offers commercial-grade current accounts, financial products, education, financing and partnership to support its clients which are all businesses. Churn is a big problem for this business - as it is with many others - because churning customers means loss of revenues and potential profits, and would then lead to expending more money to find new customers which is more expensive than retaining existing customers. Churn can also be harmful to the brand if churned customers who leave because of bad experience(s) spread negative word of mouth.
 
 The requirements for this task are as follows:
 1. To train a classifier that can predict customer churn for Brass.
-2. To define churn for Brass - using the data provided by the company. In the data provided, Brass did not label any customer as `churned` or `not churned`. It is my responsibility to come up with a definition of churn to be used for my analysis and modeling. 
-3. To engineer features that will be used in predicting churn. Brass was unable to share much demographic data due to security concerns about sharing customer information with me as a non-staff who is not physically on site. A key point to be noted is that since my definition of churn would likely rely on the `date` feature in my dataset, I cannot engineer new columns that are also dependent on time/date otherwise those features can be indicative of churn. For instance a feature like month over month change in debit amounts or month over month change in ledger_balance may be helpful to use, but engineering those features would rely on time and therefore indicative of churn for our model.
+2. To define churn for Brass - using the data provided by the company. In the data provided, Brass did not label any customer as `churned` or `not churned`. It was my responsibility to come up with a definition of churn to be used for my analysis and modeling. 
+3. To engineer new features to be used in predicting churn. Brass was unable to share much demographic data due to security concerns about sharing customer information with me as a non-staff who is not physically on site. 
+
+A key feature-engineering challenge was that since my definition of churn relied on the `date` feature in my dataset, I could not engineer new columns that were also dependent on time/date as those features could be indicative of churn. For instance a feature like month over month change in debit amounts or month over month change in ledger_balance might have been helpful, but engineering those features would have relied on time and therefore indicative of churn for our model.
+
 ---
 
 # Metrics for Evaluation
 
-Since the classes in this project are unbalanced, we cannot rely exclusively on accuracy as the metric of choice for evaluation. Brass does not tell me what metrics to use in my evaluation, but I chose the below five metrics.
+Since the classes in the project were unbalanced, I could not exclusively rely on accuracy as the metric of choice for evaluation. Brass did not specify a metric to be used in my evaluation, but I chose the below five metrics.
 
 1. Accuracy score
 2. Balanced accuracy score
@@ -48,7 +51,8 @@ The two datasets had not been filtered, so there were lots of customers in the `
 ---
 
 # Data Dictionary
-After joining the two datasets together, these are the features that remained in the combined dataset.
+After joining the two datasets together, these are the features that remained in the new combined dataset - [brass.csv](./data/brass.csv)
+
 |**S/No**|**Feature**|**Type**|**Description**|
 |:---|:---|:---|:---|
 |1|`id`|int64|Unique ID for each customer in the dataset|
@@ -68,7 +72,7 @@ In the five notebooks in this project, I go through the following processes:
 
 As mentioned earlier, the data provided contained extraneous rows due to a mismatch in samples provided to me. I removed those using SQL by joining the datasets together into one combined - [brass.csv](./data/brass.csv) dataset which I then exported for use in my analysis and modeling. Several data cleaning operations were carried out including but not limited to - dropping columns, renaming, converting to datetime objects, converting currency, among others. 
  
-**Defining Churn**: Since Brass did not label customers as either `churned` or `not churned`, I analysed the dataset to define what churn could represent in the company. In my analysis, I realized that presently Brass accounts can lay dormant for long periods but it does not mean that the customer has churned. I spoke with Brass officials who confirmed this to be true, explaining the seasonality of some clients. I found the following in my analysis:
+**Defining Churn**: Since Brass did not label customers as either `churned` or `not churned`, I analysed the dataset to define what churn could represent in the company. In my analysis, I realized that presently Brass accounts can lay dormant for long periods but it does not mean that the customer had churned. I spoke with Brass officials who confirmed this to be true, explaining the seasonality of some clients. I found the following in my analysis:
 
 |**What**|**How Long**|
 |:---|:---|
@@ -76,7 +80,8 @@ As mentioned earlier, the data provided contained extraneous rows due to a misma
 |Median time between most recent transactions per customer and year end|92 days|
 |**75th percentile**|**184 days**|
 
-I decided to use the 75th percentile rather than any of those averages as the cutoff for churn. Hence, 184 days was the cutoff used in this project to define churn. Accounts without transactions in over 184 days were considered to have churned. As can be seen in the distribution below, there were still customers in whose accounts transactions still happened beyond the 184 days cutoff, but on investigation most of those were either bank charges or small amounts. I felt comfortable retaining the cutoff at 184 days. 
+I decided to use the 75th percentile rather than any of those averages as the cutoff for churn. Hence, 184 days was the cutoff used in this project to define churn. Accounts without transactions in over 184 days were considered to have churned. As can be seen in the distribution below, there were still customers in whose accounts transactions still happened beyond the 184 days cutoff, but on investigation, I found that most of those were either bank charges or small amounts. I felt comfortable retaining the cutoff at 184 days. 
+
 
 ![image](./images/distribution_of_difference.png)
 
@@ -120,4 +125,4 @@ This was also successfully done as explained earlier.
 3. To engineer features that will be used in predicting churn. Brass was unable to share much demographic data due to security concerns about sharing customer information with me as a non-staff who is not physically on site. 
 This was also done as explained earlier, with the feature engineering of 11 new features (reduced to 9) which was used for our modeling to good effect. 
 
-**Going forward**: I recommend that the model be continuously fine-tuned with more data because the one year of the data is not sufficient considering a churn cutoff of 180 days. Internally, Brass could also strengthen the model by adding some more features that it was unable to share with me due to security concerns. 
+**Going forward**: I recommend that the model be continuously fine-tuned with more data because the one year of the data is not sufficient considering a churn cutoff of 180 days. Internally, Brass could also strengthen the model by adding some more features that it was unable to share with me due to security concerns. In terms of its operations, Brass also has to look into means to ensure more frequent use of accounts by customers. As stated earlier, the average number of days between the most recent transactions per customer and the end of the year was 107 days. If customers stay too long between transactions, it means they have preferred alternatives, and churn becomes easier.  
