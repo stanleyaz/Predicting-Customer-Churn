@@ -1,4 +1,4 @@
-# Predicting-Customer-Churn-For-Brass
+# Predicting-Customer-Churn-For-Brass-Business-Bank
 
 ## Author: Stanley Azuakola
 
@@ -97,4 +97,8 @@ A huge chunk of the work for this project took place in this phase. As mentioned
 There were strong correlations between the `debit_count_ratio` and `debit_count` features, as well as between the `cred_count_ratio` and `credit_count` features. Hence, I dropped the `credit_count` and `debit_count` columns.
 
 ## Preprocessing and modeling
-I split the dataset into train and test
+I split the dataset into train and test sets, scaled it, and tried several different models, evaluating on the five metrics discussed earlier namely: Accuracy score, Balanced accuracy score, Recall/Sensitivity, Geometric mean, and Fbeta score. I started with Logistic Regression, Random Forest and Decision Tree Classifiers using only the numerical columns for modeling. Of those first three models, my best was the Random Forest model with a balanced accuracy of 84% for my test set, 69% recall for test set amd 83% geometric mean for test set. I decided at that point to include the `registration_type` categorical feature to see if it produces better models. But when I tested it on those three models, the metrics weren't better. For the LR and DT classifiers, the test scores were exactly the same, and for the RF classifier which was my best at that point, there was a decline - with balanced accuracy of 82%, recall of 66% and geometric mean of 82%. I decided at that point not to proceed with that feature and to continue my modeling with only my feature engineered numerical features. 
+
+In the end my modeling process involved 14 different models (See picture below). My best model was a stacked classifier model that I had gridsearched over to tune its hyperparameters.
+
+![image](./images/all_models_screenshot.png) 
