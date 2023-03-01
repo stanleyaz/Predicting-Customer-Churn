@@ -12,7 +12,7 @@ The requirements for this task are as follows:
 2. To define churn for Brass - using the data provided by the company. In the data provided, Brass did not label any customer as `churned` or `not churned`. It was my responsibility to come up with a definition of churn to be used for my analysis and modeling. 
 3. To engineer new features to be used in predicting churn. Brass was unable to share much demographic data due to security concerns about sharing customer information with me as a non-staff who is not physically on site. 
 
-A key feature-engineering challenge was that since my definition of churn relied on the `date` feature in my dataset, I could not engineer new columns that were also dependent on time/date as those features could be indicative of churn. For instance a feature like month over month change in debit amounts or month over month change in ledger_balance might have been helpful, but engineering those features would have relied on time and therefore indicative of churn for our model.
+A key feature-engineering challenge was that since my definition of churn relied on the `date` feature in my dataset, I could not engineer new columns that were also dependent on time/date as those features could be indicative of churn. For instance a feature like month over month change in `debit` amounts or month over month change in `ledger_balance` might have been helpful, but engineering those features would have relied on time and therefore indicative of churn for our model.
 
 ---
 
@@ -33,7 +33,7 @@ Explanations for my choice of these metrics are provided in my [first notebook](
 # Contents
 
 ### Jupyter notebooks
-1. [Introduction and Data cleaning](./notebooks/01_introduction.ipynb)
+1. [Introduction, Data cleaning and Defining Churn](./notebooks/01_introduction.ipynb)
 2. [Exploratory Data Analysis](./notebooks/02_eda.ipynb)
 3. [Feature Engineering](./notebooks/03_feature_engineering.ipynb)
 4. [Preprocessing and Modeling](./notebooks/04_modeling.ipynb)
@@ -104,7 +104,7 @@ There were strong correlations between the `debit_count_ratio` and `debit_count`
 ## Preprocessing and modeling
 I split the dataset into train and test sets, scaled it, and tried several different models, evaluating on the five metrics discussed earlier namely: Accuracy score, Balanced accuracy score, Recall/Sensitivity, Geometric mean, and Fbeta score. At some point I dummified and included the `registration_type` column but my evaluation metrics did not see improvements, so I decided not to proceed with that feature and to continue my modeling with only my feature engineered numerical features. 
 
-In the end my modeling process involved 14 different models (See picture below). My production model was a stacked classifier model (in the picture below, it is the last model, named `Stacked Encore`). The confusion matrix in the picture is that of our best model.
+In the end my modeling process involved 14 different models (See table below). My production model was a stacked classifier model (in the picture below, it is the last model, named `Stacked Encore`). The confusion matrix below the table is that of our best model.
 
 ![image](./images/all_models_screenshot.png) 
 
@@ -114,15 +114,16 @@ In the end my modeling process involved 14 different models (See picture below).
 For every business, the less churn you have, the better. So being able to calculate and predict churn is crucial, not just because it is cheaper to retain old customers than to attract new ones, but also because it is a measure of customer satisfaction. In this project I set out to:
 
 1. To train a classifier that can predict customer churn for Brass.
-This was successfully done. Our production model had a balanced accuracy of 89%, indicating that it was performing just as well for both positive and negative classes; a recall of 82%, indicating that it was doing well at minimizing false negatives which is exactly what I wanted; an accuracy of 94% , which is 15% more accurate than the null model etc. As the confusion matrix above indicates, the model is only incorrectly classifying 17 churned customers as not churned. In comparison, our next closest model was incorrectly classifying 25 churned customers as not churned. 
+This was successfully done. Our production model had a balanced accuracy of 89%, indicating that it was performing just as well for both positive and negative classes; a recall of 82%, indicating that it was doing well at minimizing false negatives which is exactly what I wanted; an accuracy of 94% , which is 15% more accurate than the null model etc. As the confusion matrix above indicates, The model is only incorrectly classifying 17 churned customers as 'not churned', a 32% improvement compared to our next closest model which was incorrectly classifying 25 churned customers as 'not churned'.
 
-2. To define churn for Brass - using the data provided by the company. In the data provided, Brass did not label any customer as `churned` or `not churned`. It is my responsibility to come up with a definition of churn to be used for my analysis and modeling. 
-This was also successfully done as explained earlier.
+2. To define churn for Brass - using the data provided by the company. 
+
+I successfully defined churn using the 75th percentile of time difference between the most recent transactions per customer and the end of the year (which was the end of our dataset). 
 
 3. To engineer features that will be used in predicting churn. Brass was unable to share much demographic data due to security concerns about sharing customer information with me as a non-staff who is not physically on site. 
 This was also done as explained earlier, with the feature engineering of 11 new features (reduced to 9) which was used for our modeling to good effect. 
 
-**Going forward**: 
+## **Going forward**: 
 1. I recommend that the model be continuously fine-tuned with more data because the one year of the data is not sufficient considering a churn cutoff of 180 days. 
 
 2. Internally, Brass could also strengthen the model by adding some more features that it was unable to share with me due to security concerns. 
