@@ -116,7 +116,7 @@ For every business, the less churn you have, the better. So being able to calcul
 1. To train a classifier that can predict customer churn for Brass.
 This was successfully done. Our production model had a balanced accuracy of 89% (5% more than baseline Random Forest model), indicating that it was performing just as well for both positive and negative classes; a recall of 82% (13% more than baseline Random Forest model), indicating that it was doing well at minimizing false negatives which is exactly what I wanted; an accuracy of 94% , which is 15% more accurate than the null model etc. The model was only incorrectly classifying 17 churned customers as 'not churned', a 32% improvement compared to our next closest model which was incorrectly classifying 25 churned customers as 'not churned', and 41% improvement on baseline RF model. 
 
-![image](../)
+![image](./images/model_right_pptx.png)
 
 2. To define churn for Brass - using the data provided by the company. 
 
