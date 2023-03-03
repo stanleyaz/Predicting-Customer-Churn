@@ -114,7 +114,7 @@ In the end my modeling process involved 14 different models (See table below). M
 For every business, the less churn you have, the better. So being able to calculate and predict churn is crucial, not just because it is cheaper to retain old customers than to attract new ones, but also because it is a measure of customer satisfaction. In this project I set out to:
 
 1. To train a classifier that can predict customer churn for Brass.
-This was successfully done. Our production model had a balanced accuracy of 89% (5% more than baseline Random Forest model), indicating that it was performing just as well for both positive and negative classes; a recall of 82% (13% more than baseline Random Forest model), indicating that it was doing well at minimizing false negatives which is exactly what I wanted; an accuracy of 94% , which is 15% more accurate than the null model etc. The model was only incorrectly classifying 17 churned customers as 'not churned', a 32% improvement compared to our next closest model which was incorrectly classifying 25 churned customers as 'not churned', and 41% improvement on baseline RF model. 
+This was successfully done. Our production model had a balanced accuracy of 89% (5% more than baseline Random Forest model), indicating that it was performing just as well for both positive and negative classes; a recall of 82% (13% more than baseline Random Forest model), indicating that it was doing well at minimizing false negatives which is exactly what I wanted; an accuracy of 94% , which is 15% more accurate than the null model etc. The model was only incorrectly classifying 17 churned customers as 'not churned', a 32% improvement compared to our next closest model which was incorrectly classifying 25 churned customers as 'not churned', and a 41% improvement on baseline RF model. 
 
 ![image](./images/model_right_pptx.png)
 
@@ -123,10 +123,11 @@ This was successfully done. Our production model had a balanced accuracy of 89% 
 I successfully defined churn using the 75th percentile of time difference between the most recent transactions per customer and the end of the year (which was the end of our dataset). 
 
 3. To engineer features that will be used in predicting churn. Brass was unable to share much demographic data due to security concerns about sharing customer information with me as a non-staff who is not physically on site. 
+
 This was also done as explained earlier, with the feature engineering of 11 new features (reduced to 9) which was used for our modeling to good effect. 
 
 ## **Going forward**: 
-1. I recommend that the model be continuously fine-tuned with more data because the one year of the data is not sufficient considering a churn cutoff of 180 days. 
+1. I recommend that the model be continuously fine-tuned with more data because the one year of the data is not sufficient considering a churn cutoff of 184 days. 
 
 2. Internally, Brass could also strengthen the model by adding some more features that it was unable to share with me due to security concerns. 
 
